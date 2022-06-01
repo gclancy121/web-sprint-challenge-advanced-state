@@ -1,24 +1,28 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import * as actionCreators from '../state/action-creators'
 
-export default function Quiz(props) {
+export function Quiz(props) {
+  const quiz = props.quiz.quiz;
+  console.log(props);
   return (
     <div id="wrapper">
       {
         // quiz already in state? Let's use that, otherwise render "Loading next quiz..."
-        true ? (
+        quiz.quiz_id !== null ? (
           <>
-            <h2>What is a closure?</h2>
+            <h2>{quiz.question}</h2>
 
             <div id="quizAnswers">
-              <div className="answer selected">
-                A function
+              <div className="answer">
+              {quiz.answers[0].text}
                 <button>
-                  SELECTED
+                  Select
                 </button>
               </div>
 
               <div className="answer">
-                An elephant
+                {quiz.answers[1].text}
                 <button>
                   Select
                 </button>
@@ -32,3 +36,5 @@ export default function Quiz(props) {
     </div>
   )
 }
+
+export default connect(st => st, actionCreators)(Quiz)

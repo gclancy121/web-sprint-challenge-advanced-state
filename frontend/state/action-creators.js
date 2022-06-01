@@ -1,5 +1,6 @@
 // ❗ You don't need to add extra action creators to achieve MVP
 import * as types from './action-types'
+import axios from 'axios'
 
 
 export function moveClockwise() { }
@@ -12,7 +13,12 @@ export function setMessage() { }
 
 export function setQuiz() { }
 
-export function inputChange() { }
+export function inputChange(id, value) {
+  return {
+    type: types.INPUT_CHANGE,
+    payload: {id, value}
+  }
+}
 
 export function resetForm() { }
 
@@ -32,11 +38,15 @@ export function postAnswer() {
     // - Dispatch the fetching of the next quiz
   }
 }
-export function postQuiz() {
+export function postQuiz(newQuiz) {
   return function (dispatch) {
     // On successful POST:
     // - Dispatch the correct message to the the appropriate state
     // - Dispatch the resetting of the form
+    axios.post(`http://localhost:9000/api/quiz/new`, newQuiz)
+    .then(res => {
+      dispatch({type: types.SET_QUIZ_INTO_STATE, payload: res.data})
+    })
   }
 }
 // ❗ On promise rejections, use log statements or breakpoints, and put an appropriate error message in state
