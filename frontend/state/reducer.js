@@ -4,17 +4,33 @@ import * as types from "./action-types"
 
 const initialWheelState = 0
 function wheel(state = initialWheelState, action) {
-  return state
+  switch(action.type) {
+    case types.MOVE_COUNTERCLOCKWISE: {
+      if (state === 0) {
+        return 5;
+      } else {
+        return state - 1;
+      }
+    }
+    case types.MOVE_CLOCKWISE: {
+      if (state === 5) {
+        return 0;
+      } else {
+        return state + 1;
+      }
+    }
+    default:
+      return state;
+  }
 }
 
 // 
 
-const initialQuizState = {quiz: {question: 'do you love me', answers: [{answer_id: '1', text: "yes", correct: true}, {answer_id: '2', text: "no", correct: false}], quiz_id: "EMFH6"}}
+const initialQuizState = null
 function quiz(quizState = initialQuizState, action) {
   switch(action.type) {
    case types.SET_QUIZ_INTO_STATE: {
-     const quiz = action.payload;
-     return {...quizState, quiz}
+     return action.payload
    } 
    default:
     return quizState;
@@ -24,12 +40,24 @@ function quiz(quizState = initialQuizState, action) {
 
 const initialSelectedAnswerState = null
 function selectedAnswer(state = initialSelectedAnswerState, action) {
-  return state
+  switch(action.type) {
+    case types.SET_SELECTED_ANSWER: {
+      return action.payload
+    }
+    default:
+      return state;
+  }
 }
 
 const initialMessageState = ''
 function infoMessage(state = initialMessageState, action) {
-  return state
+  switch(action.type) {
+    case types.SET_INFO_MESSAGE: {
+      return action.payload;
+    } 
+    default:
+      return state;
+  }
 }
 
 const initialFormState = {
@@ -42,6 +70,9 @@ function form(formState = initialFormState, action) {
     case types.INPUT_CHANGE: {
       const { id, value } = action.payload;
       return {...formState, [id]: value}
+    }
+    case types.RESET_FORM: {
+      return initialFormState;
     }
     default:
       return formState

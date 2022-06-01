@@ -3,15 +3,35 @@ import * as types from './action-types'
 import axios from 'axios'
 
 
-export function moveClockwise() { }
+export function moveClockwise() {
+  return {
+    type: types.MOVE_CLOCKWISE
+  }
+ }
 
-export function moveCounterClockwise() { }
+export function moveCounterClockwise() { 
+  return {
+    type: types.MOVE_COUNTERCLOCKWISE
+  }
+}
 
-export function selectAnswer() { }
+export function selectAnswer(id) {
+  return {
+    type: types.SET_SELECTED_ANSWER,
+    payload: id
+  }
+ }
 
-export function setMessage() { }
+export function setMessage(data) { 
+  return {
+    type: types.SET_INFO_MESSAGE, payload: data
+  }
+ 
+}
 
-export function setQuiz() { }
+export function setQuiz(data) {
+  return {type: types.SET_QUIZ_INTO_STATE, payload: data};
+ }
 
 export function inputChange(id, value) {
   return {
@@ -20,18 +40,36 @@ export function inputChange(id, value) {
   }
 }
 
-export function resetForm() { }
+export function resetForm() {
+  return {
+    type: types.RESET_FORM
+  }
+ }
 
 // ❗ Async action creators
 export function fetchQuiz() {
   return function (dispatch) {
+    axios.get(`http://localhost:9000/api/quiz/next`)
+    .then(res => {
+      dispatch(setQuiz(res.data));
+    })
     // First, dispatch an action to reset the quiz state (so the "Loading next quiz..." message can display)
     // On successful GET:
     // - Dispatch an action to send the obtained quiz to its state
   }
 }
-export function postAnswer() {
+export function postAnswer(id, answer) {
   return function (dispatch) {
+    const payload = {quiz_id: id, answer_id: answer};
+    axios.post(`http://localhost:9000/api/quiz/answer`, payload)
+    .then(res => {
+      dispatch(setMessage(res.data.message))
+      dispatch(fetchQuiz());
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    
     // On successful POST:
     // - Dispatch an action to reset the selected answer state
     // - Dispatch an action to set the server message to state
@@ -45,7 +83,10 @@ export function postQuiz(newQuiz) {
     // - Dispatch the resetting of the form
     axios.post(`http://localhost:9000/api/quiz/new`, newQuiz)
     .then(res => {
+      console.log(res.data)
       dispatch({type: types.SET_QUIZ_INTO_STATE, payload: res.data})
+      dispatch(setMessage(`Congrats: "${res.data.question}" is a great question!`))
+      dispatch(resetForm())
     })
   }
 }

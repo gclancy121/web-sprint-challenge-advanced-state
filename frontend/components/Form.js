@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import * as actionCreators from '../state/action-creators'
 
 export function Form(props) {
-  console.log(props.form)
   // console.log(props);
   const onSubmit = evt => {
    evt.preventDefault();
@@ -12,6 +11,13 @@ export function Form(props) {
    const falseAnswer = evt.target.newFalseAnswer.value;
    props.postQuiz({question_text: question, true_answer_text: trueAnswer, false_answer_text: falseAnswer});
   }
+
+  const onChange = evt => {
+    const {id, value} = evt.target;
+    props.inputChange(id, value);
+    
+  }
+
  const isDisabled = () => {
    const button = document.getElementById("submitNewQuizBtn");
    const trimmedQuestion = props.form.newQuestion.trim(' ');
@@ -24,16 +30,10 @@ export function Form(props) {
       return button.disabled = true;
     }
  }
+ 
  useEffect(() => {
    isDisabled();
  }, [props.form])
- const onChange = evt => {
-  const {id, value} = evt.target;
-  props.inputChange(id, value);
-  
-}
-
-
  
   return (
     <form id="form" onSubmit={onSubmit}>
